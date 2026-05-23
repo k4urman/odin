@@ -1,4 +1,4 @@
-# Odin — AI vision assistant for the camera
+# odin - Object Detection Interpretive Narrator
 
 Odin captures your webcam, runs **Ultralytics YOLO** object detection, estimates **rough distance** from a single camera, infers **motion** and **pose-related cues** (e.g. possible waving, hands near a surface), and speaks a **natural-language summary** with **gTTS** + **pygame**. Optional **Purdue GenAI Studio** can polish the same structured context over an OpenAI-compatible HTTP API.
 
