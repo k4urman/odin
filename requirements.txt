@@ -1,0 +1,11 @@
+# Guide Dog - Dependencies
+# Install with: pip install -r requirements.txt
+
+ultralytics>=8.4.53        # YOLO26 — auto-downloads weights on first run
+opencv-python>=4.9.0       # Camera capture & display
+numpy>=1.26.0              # Array ops
+scikit-image>=0.24.0       # Scene interpretation (luminance, edges, layout)
+requests>=2.31.0           # Purdue GenAI Studio (OpenAI-compatible HTTP API)
+python-dotenv>=1.0.0       # Optional .env for PURDUE_GENAI_API_KEY
+gTTS>=2.5.0                # Google Text-to-Speech (multilingual)
+pygame>=2.5.0              # Audio playback

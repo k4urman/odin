@@ -1,75 +1,75 @@
-# Guide Dog - Object Detection Tool
+# Guide Dog — AI vision assistant for the camera
 
-   ```bash
-88d8b.d8b.      88    88
-88'`88'`88`     88  d8 
-88  88  88      88 K    
-88  88  88      88  98  
-88  88  88  88  88    88  88
-   ```
+Guide Dog captures your webcam, runs **Ultralytics YOLO** object detection, estimates **rough distance** from a single camera, infers **motion** and **pose-related cues** (e.g. possible waving, hands near a surface), and speaks a **natural-language summary** with **gTTS** + **pygame**. Optional **Purdue GenAI Studio** can polish the same structured context over an OpenAI-compatible HTTP API.
 
+Narration is **deduplicated**: it only speaks again when the scene “fingerprint” changes (objects, position, distance bucket, motion/pose hints, or lighting)—not on a fixed repeat loop.
 
+## Features
 
-This Python script demonstrates object detection using OpenCV's DNN module and provides spoken feedback using text-to-speech capabilities.
+| Area | What it does |
+|------|----------------|
+| **Detection** | `yolo26n.pt` (auto-downloaded on first run). Configurable via `YOLO_MODEL`. |
+| **Scene interpretation** | **scikit-image** luminance, edges, and quadrant brightness → text briefing for GenAI |
+| **Depth (approximate)** | Maps bounding-box size to spoken ranges like “about three feet away.” Tune `guide_dog/depth.py` for your webcam if needed. |
+| **Motion** | Frame differencing on a downscaled gray stream for person ROI movement cues. |
+| **Pose** | Optional `yolo11n-pose.pt` (throttled) for arm/hand hints. |
+| **Speech** | gTTS + pygame with a **queue** so updates are not dropped. |
+| **Purdue GenAI** | If `PURDUE_GENAI_API_KEY` is set, structured sensor lines + local draft are sent to [GenAI Studio](https://www.rcac.purdue.edu/knowledge/genaistudio/api). Without a key, **local** narration still runs. |
 
-NOTE: you need to downlaod the yolov3.weights file (not included) to make the follwing code work. 
+## Project layout
 
-
-Introducing the revolutionary video-to-speech algorithm, designed to empower the visually impaired community! Using neural networks and video recognition libraries, we’ve created Guide Dog to accurately describe visual content from videos in real-time. By converting visual information into clear and detailed spoken descriptions, our algorithm provides a seamless and immersive experience for users, enabling them to access a wide range of video content independently.
-
-How does it work? Using Python, Guide Dog splits the screen into blocks and analyzes each. As it analyzes it slowly makes inferences and can put the image back together. Using a list of requirements, it makes a conclusion of what the item is. It then grabs data from the position of the object and supposed distance to say it through a speaker, allowing for the user to be guided. 
-
-Imagine effortlessly exploring educational videos, news clips, entertainment content, and more, with rich and descriptive audio narrations guiding your experience. Guide Dog speaks to the user, guiding them through their everyday life, enhancing the depth and richness of the auditory experience.
+- **`main.py`** — Camera loop, YOLO, scikit-image layout, TTS, optional GenAI.
+- **`guide_dog/`** — `depth.py`, `motion.py`, `pose_hints.py`, `narration.py`, `narrative_builder.py`.
+- **`tests/`** — `python -m unittest discover -s tests -v`
 
 ## Setup
 
-1. Install the required libraries:
-   - OpenCV (`cv2`)
-   - NumPy (`numpy`)
-   - Google's text-to-speech (`gtts`)
+1. **Python 3.10+** recommended.
 
-2. Download the YOLOv3 model files (`yolov3.weights`, `yolov3.cfg`) and class names file (`name.names`). There are repos for YOLOv3 and can be downloaded from these places. Even downaloded from this repo will be resourceful. Just amke sure all the files are in the same folder.
+2. Install dependencies:
 
-3. Update the paths to the model weights, configuration file, and class names file in the code (`ObjectDetector` initialization).
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Optional — Purdue GenAI Studio**
+
+   API key: GenAI Studio UI → avatar → **Settings** → **Account** → **API Keys**.
+
+   Copy `.env.example` to `.env`:
+
+   ```
+   PURDUE_GENAI_API_KEY=your-key-here
+   ```
+
+   Or in PowerShell:
+
+   ```powershell
+   $env:PURDUE_GENAI_API_KEY = "your-key"
+   ```
+
+   Optional: `PURDUE_GENAI_URL`, `PURDUE_GENAI_MODEL` (default `llama3.1:latest`).
 
 ## Usage
 
-1. Run the script `object_detection.py`.
-   ```bash
-   python object_detection.py
-   ```
+```bash
+python main.py
+```
 
-2. The script will initialize the object detector and text-to-speech engine, then start capturing frames from the default camera.
+- **q** — Quit  
+- **l** — Change TTS language (e.g. `en`, `es`)
 
-3. Detected objects will be spoken out loud, and bounding boxes with labels and confidence levels will be displayed on the video feed.
+Adjust `YOLO_CONFIDENCE`, `CAMERA_INDEX`, `POSE_EVERY_N_FRAMES` at the top of `main.py`.
 
-4. Press 'q' to quit the application.
+## Limitations
 
-## Components
-
-### ObjectDetector Class
-
-- **`__init__(self, model_weights, model_config, class_names_file)`**: Initializes the object detector using YOLOv3 model files and loads class names from a file.
-  
-- **`detect_objects(self, frame)`**: Performs object detection on a frame, returning detected objects with labels, confidences, and bounding box coordinates.
-
-### TextToSpeech Class
-
-- **`__init__(self)`**: Initializes the text-to-speech engine.
-
-- **`speak(self, text)`**: Converts text to speech and speaks it out loud.
+- **Distance** is a monocular heuristic, not a depth sensor.
+- **Gesture hints** are best-effort and can false-positive in clutter.
+- **gTTS** needs network access to synthesize speech.
 
 ## Dependencies
 
-- Python 3.x
-- OpenCV (`cv2`)
-- NumPy (`numpy`)
-- gTTS (`gtts`)
-
-## Next Steps
-
-Something to note is that Guide Dog is still in its early stages. The next steps would be to make the video recognition much more immersive and allow the audio assistant to actually have full description of what is in front of the user, rather than simply stating the object.
-
+See **`requirements.txt`**: `ultralytics`, `opencv-python`, `numpy`, `scikit-image`, `requests`, `python-dotenv`, `gTTS`, `pygame`.
 
 ---
 
