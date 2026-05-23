@@ -1,4 +1,4 @@
-# Guide Dog - Dependencies
+# Odin - Dependencies
 # Install with: pip install -r requirements.txt
 
 ultralytics>=8.4.53        # YOLO26 — auto-downloads weights on first run

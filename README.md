@@ -1,6 +1,6 @@
-# Guide Dog — AI vision assistant for the camera
+# Odin — AI vision assistant for the camera
 
-Guide Dog captures your webcam, runs **Ultralytics YOLO** object detection, estimates **rough distance** from a single camera, infers **motion** and **pose-related cues** (e.g. possible waving, hands near a surface), and speaks a **natural-language summary** with **gTTS** + **pygame**. Optional **Purdue GenAI Studio** can polish the same structured context over an OpenAI-compatible HTTP API.
+Odin captures your webcam, runs **Ultralytics YOLO** object detection, estimates **rough distance** from a single camera, infers **motion** and **pose-related cues** (e.g. possible waving, hands near a surface), and speaks a **natural-language summary** with **gTTS** + **pygame**. Optional **Purdue GenAI Studio** can polish the same structured context over an OpenAI-compatible HTTP API.
 
 Narration is **deduplicated**: it only speaks again when the scene “fingerprint” changes (objects, position, distance bucket, motion/pose hints, or lighting)—not on a fixed repeat loop.
 
@@ -10,7 +10,7 @@ Narration is **deduplicated**: it only speaks again when the scene “fingerprin
 |------|----------------|
 | **Detection** | `yolo26n.pt` (auto-downloaded on first run). Configurable via `YOLO_MODEL`. |
 | **Scene interpretation** | **scikit-image** luminance, edges, and quadrant brightness → text briefing for GenAI |
-| **Depth (approximate)** | Maps bounding-box size to spoken ranges like “about three feet away.” Tune `guide_dog/depth.py` for your webcam if needed. |
+| **Depth (approximate)** | Maps bounding-box size to spoken ranges like “about three feet away.” Tune `odin/depth.py` for your webcam if needed. |
 | **Motion** | Frame differencing on a downscaled gray stream for person ROI movement cues. |
 | **Pose** | Optional `yolo11n-pose.pt` (throttled) for arm/hand hints. |
 | **Speech** | gTTS + pygame with a **queue** so updates are not dropped. |
@@ -19,7 +19,7 @@ Narration is **deduplicated**: it only speaks again when the scene “fingerprin
 ## Project layout
 
 - **`main.py`** — Camera loop, YOLO, scikit-image layout, TTS, optional GenAI.
-- **`guide_dog/`** — `depth.py`, `motion.py`, `pose_hints.py`, `narration.py`, `narrative_builder.py`.
+- **`odin/`** — `depth.py`, `motion.py`, `pose_hints.py`, `narration.py`, `narrative_builder.py`.
 - **`tests/`** — `python -m unittest discover -s tests -v`
 
 ## Setup

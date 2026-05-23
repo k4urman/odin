@@ -23,16 +23,16 @@ from skimage import color
 from skimage.filters import sobel
 from ultralytics import YOLO
 
-from guide_dog.motion import MotionAnalyzer, classify_person_motion
-from guide_dog.narration import NarrationGate
-from guide_dog.narrative_builder import (
+from odin.motion import MotionAnalyzer, classify_person_motion
+from odin.narration import NarrationGate
+from odin.narrative_builder import (
     build_enriched_detections,
     build_scene_fingerprint,
     compose_narration,
     format_enriched_for_llm,
     lighting_from_frame,
 )
-from guide_dog.pose_hints import PoseHintEstimator
+from odin.pose_hints import PoseHintEstimator
 
 # --- Configuration ---
 YOLO_MODEL = os.getenv("YOLO_MODEL", "yolo26n.pt")
@@ -82,10 +82,10 @@ def interpret_scene_layout(frame_bgr: np.ndarray) -> str:
 
 class ObjectDetector:
     def __init__(self, model_name: str = YOLO_MODEL, conf: float = YOLO_CONFIDENCE):
-        print(f"[Guide Dog] Loading detection model {model_name}...")
+        print(f"[Odin] Loading detection model {model_name}...")
         self.model = YOLO(model_name)
         self.conf = conf
-        print("[Guide Dog] Detection model ready.")
+        print("[Odin] Detection model ready.")
 
     def detect(self, frame: np.ndarray) -> list[dict]:
         result = self.model(frame, conf=self.conf, verbose=False)[0]
@@ -164,7 +164,7 @@ class AIDescriber:
             data = resp.json()
             return data["choices"][0]["message"]["content"].strip()
         except (requests.RequestException, KeyError, json.JSONDecodeError) as exc:
-            print(f"[Guide Dog] GenAI request failed: {exc}")
+            print(f"[Odin] GenAI request failed: {exc}")
             return None
 
 
@@ -194,7 +194,7 @@ class TextToSpeech:
                 except OSError:
                     pass
             except Exception as exc:
-                print(f"[Guide Dog] TTS error: {exc}")
+                print(f"[Odin] TTS error: {exc}")
             finally:
                 self._q.task_done()
 
@@ -282,7 +282,7 @@ def main() -> None:
         try:
             pose_estimator = PoseHintEstimator(POSE_MODEL)
         except Exception as exc:
-            print(f"[Guide Dog] Pose model disabled: {exc}")
+            print(f"[Odin] Pose model disabled: {exc}")
 
     cap = cv2.VideoCapture(CAMERA_INDEX)
     if not cap.isOpened():
@@ -295,15 +295,15 @@ def main() -> None:
     cached_pose: list[dict] = []
 
     if describer.is_configured:
-        tts.speak("Guide Dog is ready. I will speak when something meaningful changes in view.")
+        tts.speak("Odin is ready. I will speak when something meaningful changes in view.")
     else:
         print(
-            "[Guide Dog] No PURDUE_GENAI_API_KEY — using local narration from YOLO and scene cues.\n"
+            "[Odin] No PURDUE_GENAI_API_KEY — using local narration from YOLO and scene cues.\n"
             "  Add a key in .env or set PURDUE_GENAI_API_KEY in your environment."
         )
-        tts.speak("Guide Dog is ready. I will describe changes using the camera.")
+        tts.speak("Odin is ready. I will describe changes using the camera.")
 
-    print("[Guide Dog] Running. Press 'q' to quit, 'l' to change language.")
+    print("[Odin] Running. Press 'q' to quit, 'l' to change language.")
 
     def run_describe(
         scene_layout: str,
@@ -362,7 +362,7 @@ def main() -> None:
                     ).start()
 
         _draw_overlay(frame, detections, last_spoken_text[0])
-        cv2.imshow("Guide Dog", frame)
+        cv2.imshow("Odin", frame)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
@@ -373,7 +373,7 @@ def main() -> None:
             tts.set_language(lang)
             describer.language = lang
             narration_gate.reset()
-            print(f"[Guide Dog] Language set to {lang}")
+            print(f"[Odin] Language set to {lang}")
 
     cap.release()
     cv2.destroyAllWindows()

@@ -2,7 +2,7 @@
 
 import unittest
 
-from guide_dog.depth import distance_bucket, estimate_distance_feet, feet_to_phrase
+from odin.depth import distance_bucket, estimate_distance_feet, feet_to_phrase
 
 
 class TestDepth(unittest.TestCase):

@@ -37,10 +37,10 @@ class PoseHintEstimator:
     def __init__(self, model_name: str = "yolo11n-pose.pt"):
         from ultralytics import YOLO
 
-        print(f"[Guide Dog] Loading pose model {model_name}...")
+        print(f"[Odin] Loading pose model {model_name}...")
         self.model = YOLO(model_name)
         self._prev_wy: list[float | None] = []
-        print("[Guide Dog] Pose model ready.")
+        print("[Odin] Pose model ready.")
 
     def estimate(
         self,

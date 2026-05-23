@@ -9,8 +9,8 @@ from typing import Any
 import cv2
 import numpy as np
 
-from guide_dog.depth import distance_bucket, estimate_distance_feet, feet_to_phrase
-from guide_dog.narration import SceneFingerprint, pose_tag_signature
+from odin.depth import distance_bucket, estimate_distance_feet, feet_to_phrase
+from odin.narration import SceneFingerprint, pose_tag_signature
 
 
 def lighting_from_frame(frame_bgr: np.ndarray) -> tuple[str, str]:
